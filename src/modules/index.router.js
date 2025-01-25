@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { urlencoded } from 'express'
 import authRouer from './auth/auth.router.js'
 import userRouter from './user/user.router.js'
 import productRouter from './product/product.router.js'
@@ -10,6 +10,7 @@ import orderRouter from './order/order.router.js'
 import morgan from 'morgan'
 import { globalErrorHandling } from '../services/handelError.js'
 import connectDB from '../../DB/connection.js'
+import cors from 'cors'
 
 
 
@@ -18,6 +19,10 @@ export const appRouter = (app) => {
 
     // convert buffer data
     app.use(express.json())
+    app.use(express.urlencoded({ extended: false }))
+
+    //setup cors
+    app.use(cors({}))
 
     // morgan check response
     if (process.env.MOOD === 'DEV') {

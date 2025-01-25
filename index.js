@@ -12,7 +12,7 @@ dotenv.config({ path: path.join(__dirname, './config/.env') })
 const app = express()
 
 // setup port and baseUrl
-const port = process.env.PORT //|| 5000
+const port = process.env.PORT || 300
 
 
 
