@@ -146,12 +146,15 @@ export const addOrder = asyncHandler(async (req, res, next) => {
 export const webhook = asyncHandler(async (req, res) => {
     
     let event;
+console.log("11111111111");
 
     const stripe = new Stripe(process, env.STRIPE_KEY)
     // Get the signature sent by Stripe
     const signature = req.headers['stripe-signature'];
 
     try {
+console.log("2222222222");
+
         event = stripe.webhooks.constructEvent(
             req.body,
             signature,
@@ -163,8 +166,11 @@ export const webhook = asyncHandler(async (req, res) => {
     }
 
     const { orderId } = event.data.object.metadata
+console.log(orderId);
+    
     // Handle the event 
     if (event.type != 'checkout.session.completed') {
+        console.log("3333333333333");
 
         await orderModel.updateOne({ _id: orderId }, { status: "rejected" })
         return res.status(400).json({ message: 'Rejected Order' });
