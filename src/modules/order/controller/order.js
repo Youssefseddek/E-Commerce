@@ -144,6 +144,7 @@ export const addOrder = asyncHandler(async (req, res, next) => {
 
 
 export const webhook = asyncHandler(async (req, res) => {
+    
     let event;
 
     const stripe = new Stripe(process, env.STRIPE_KEY)
@@ -163,7 +164,7 @@ export const webhook = asyncHandler(async (req, res) => {
 
     const { orderId } = event.data.object.metadata
     // Handle the event 
-    if (event.type != 'payment_intent.succeeded') {
+    if (event.type != 'checkout.session.completed') {
 
         await orderModel.updateOne({ _id: orderId }, { status: "rejected" })
         return res.status(400).json({ message: 'Rejected Order' });
