@@ -67,7 +67,10 @@ export const updateCategory = asyncHandler(async (req, res, next) => {
         }
         return res.status(201).json({ message: 'Done', category })
     } else {
-        await cloudinary.uploader.destroy(req.body.imagePublicId)
+        if (req.file) {
+            await cloudinary.uploader.destroy(req.body.imagePublicId)
+        }
+       
         return next(new Error('fail to update category', { cause: 400 }))
     }
 

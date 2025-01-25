@@ -18,7 +18,16 @@ export const appRouter = (app) => {
 
 
     // convert buffer data
-    app.use(express.json())
+    
+    app.use((req,res,next)=>{
+        console.log(req.originalUrl);
+        
+        if (req.originalUrl == `/order/webhook`) {
+            next()
+        } else {
+            express.json()(req,res,next)
+        }
+    })
     app.use(express.urlencoded({ extended: false }))
 
     //setup cors

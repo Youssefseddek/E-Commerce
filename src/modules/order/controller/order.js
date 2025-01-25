@@ -48,28 +48,7 @@ export const addOrder = asyncHandler(async (req, res, next) => {
         finalList.push(product)
 
     }
-    // for (let i = 0; i < products.length; i++) {
 
-    //     const checkProduct = await productModel.findOne(
-    //         {
-    //             _id: products[i].productId,
-    //             stock: { $gte: products[i].quantity }
-    //         }
-    //     )
-
-    //     if (!checkProduct) {
-    //         return next(new Error("In-valid to place this order", { cause: 409 }))
-    //     }
-
-    //     products[i].unitPrice = checkProduct.finalPrice
-    //     products[i].finalPrice = checkProduct.finalPrice * products[i].quantity
-
-    //     sumTotal += products[i].finalPrice
-    //     // finalList.push(products[i])
-    // }
-
-
-    // console.log({pp:req.body.products});
     req.body.sumTotal = sumTotal
     req.body.finalPrice = sumTotal
 
@@ -154,4 +133,43 @@ export const addOrder = asyncHandler(async (req, res, next) => {
 
 
 
+})
+
+
+
+
+
+
+
+
+
+export const webhook = asyncHandler(async (req, res) => {
+    let event;
+
+    const stripe = new Stripe(process, env.STRIPE_KEY)
+    // Get the signature sent by Stripe
+    const signature = req.headers['stripe-signature'];
+
+    try {
+        event = stripe.webhooks.constructEvent(
+            req.body,
+            signature,
+            process.env.endpointSecret
+        );
+    } catch (err) {
+        console.log(`⚠️  Webhook signature verification failed.`, err.message);
+        return res.sendStatus(400);
+    }
+
+    const { orderId } = event.data.object.metadata
+    // Handle the event 
+    if (event.type != 'payment_intent.succeeded') {
+
+        await orderModel.updateOne({ _id: orderId }, { status: "rejected" })
+        return res.status(400).json({ message: 'Rejected Order' });
+    }
+    await orderModel.updateOne({ _id: orderId }, { status: "received" })
+
+    // Return a 200 res to acknowledge receipt of the event
+    return res.status(200).json({ message: 'received Order' });
 })
