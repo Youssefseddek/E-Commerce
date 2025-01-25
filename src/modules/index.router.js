@@ -30,7 +30,6 @@ export const appRouter = (app) => {
             express.json({})(req, res, next)
         }
     })
-    app.use(express.urlencoded({ extended: false }))
 
 
     // morgan check response
@@ -44,6 +43,9 @@ export const appRouter = (app) => {
     const baseUrl = process.env.BASE_URL
 
     // setup API Routing
+    app.get('/', (req, res, next) => {
+        return res.status(200).send("Welcome to E-commerce App.")
+    })
     app.use(`${baseUrl}/auth`, authRouer)
     app.use(`${baseUrl}/user`, userRouter)
     app.use(`${baseUrl}/product`, productRouter)
