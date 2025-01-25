@@ -16,22 +16,22 @@ import cors from 'cors'
 
 export const appRouter = (app) => {
 
+    //setup cors
+    app.use(cors({}))
 
     // convert buffer data
-    
-    app.use((req,res,next)=>{
+
+    app.use((req, res, next) => {
         console.log(req.originalUrl);
-        
+
         if (req.originalUrl == `/order/webhook`) {
             next()
         } else {
-            express.json()(req,res,next)
+            express.json({})(req, res, next)
         }
     })
     app.use(express.urlencoded({ extended: false }))
 
-    //setup cors
-    app.use(cors({}))
 
     // morgan check response
     if (process.env.MOOD === 'DEV') {
