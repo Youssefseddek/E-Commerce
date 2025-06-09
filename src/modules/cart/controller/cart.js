@@ -84,7 +84,7 @@ export const clearCart = asyncHandler(async (req, res, next) => {
 
 export const getCart = asyncHandler(async (req, res, next) => {
 
-    const cart = await cartModel.findOne({ userId: req.user._id }).populate({})
+    const cart = await cartModel.findOne({ userId: req.user._id })
     if (!cart) {
         return next(new Error("In-valid cart", { cause: 404 }))
     }
