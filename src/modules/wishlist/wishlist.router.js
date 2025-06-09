@@ -15,4 +15,5 @@ router.patch('/remove', auth(endPoint.remove), wishlist_controller.removeToWishl
 
 
 
+
 export default router
