@@ -28,7 +28,7 @@ router.get('/:id',product_controller.getAllProductById)
 
 
 // search product by name
-router.get('/search',product_controller.getAllProductById)
+router.get('/search',product_controller.searchProductByName)
 
 
 export default router

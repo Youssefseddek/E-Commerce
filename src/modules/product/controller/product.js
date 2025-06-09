@@ -201,9 +201,44 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     return res.status(200).json({ message: "Done", finlProducts })
 })
 
-
 // get product by id
 export const getAllProductById = asyncHandler(async (req, res, next) => {
+    const { id } = req.params
+    const product = await productModel.findById(id).populate([
+        {
+            path: 'createdBy',
+            select: 'userName email'
+        },
+        {
+            path: 'updatedBy',
+            select: 'userName email'
+        },
+        {
+            path: 'subCategoryId',
+            select: 'name image',
+            populate: {
+                path: 'categoryId',
+                select: 'name image',
+            }
+        },
+        {
+            path: 'brandId',
+            select: 'name image'
+        },
+
+    ])
+    if (!product) {
+        return next(new Error('In-valid product Id', { cause: 404 }))
+    }
+
+    return res.status(200).json({ message: "Done", product })
+}
+)
+
+
+
+// search product by name
+export const searchProductByName = asyncHandler(async (req, res, next) => {
     const { searchKey } = req.query
     console.log(searchKey);
 
