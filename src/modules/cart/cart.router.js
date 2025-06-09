@@ -14,7 +14,7 @@ router.patch('/remove', auth(endPoint.remove), cart_controller.removeFromCart)
 
 router.patch('/clear', auth(endPoint.clear), cart_controller.clearCart)
 
-router.get('/', auth(endPoint.getCart), cart_controller.getCart)
+router.get('/', auth(endPoint.get), cart_controller.getCart)
 
 
 export default router
