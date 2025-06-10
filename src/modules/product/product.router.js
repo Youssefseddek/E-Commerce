@@ -1,6 +1,6 @@
 import { Router } from "express";
 import auth from "../../middleware/authentication.js";
-import { endPoint } from "../brand/brand.endPoint.js";
+import { endPoint } from "./product.endPoint.js"
 import { HME, myMulter, validationTypes } from "../../services/cloudMulter.js";
 import * as product_controller from './controller/product.js'
 import wishlistRouter from '../wishlist/wishlist.router.js'
@@ -23,12 +23,20 @@ router.put('/:id', auth(endPoint.update), myMulter(validationTypes.image).array(
 router.get('/',product_controller.getAllProducts)
 
 
+// search product by name
+router.get('/search',product_controller.searchProductByName)
+
+
 // get product by id
 router.get('/:id',product_controller.getAllProductById)
 
 
-// search product by name
-router.get('/search',product_controller.searchProductByName)
+
+
+// delete product
+router.delete('/:id', auth(endPoint.delete), product_controller.deleteProduct)
+
+
 
 
 export default router

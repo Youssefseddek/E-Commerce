@@ -95,6 +95,11 @@ export const getAllCategories = asyncHandler(async (req, res, next) => {
         {
             path: 'subCategory',
             select: 'name image'
+        },
+        {
+            path: 'products',
+            select: 'name image price',
+            options: { limit: Number(req.query.productsLimit) || 6 } // Set default or use query param
         }
     ])
 
@@ -135,8 +140,32 @@ export const getCategoryById = asyncHandler(async (req, res, next) => {
         {
             path: 'updatedBy',
             select: 'userName email image'
+        },
+        {
+            path: 'subCategory',
+            select: 'name image',
+        },
+        {
+            path: 'products',
+            select: 'name image price',
+            options: { limit: Number(req.query.productsLimit) || 6 } // Set default or use query param
         }
     ])
 
     return res.status(200).json({ message: 'Done', category })
+})
+
+
+// delete
+export const deleteCategory = asyncHandler(async (req, res, next) => {
+
+    const { id } = req.params
+    const category = await categoryModel.findOneAndDelete({ _id: id })
+
+    if (category) {
+        await cloudinary.uploader.destroy(category.imagePublicId)
+        return res.status(200).json({ message: 'Done', category })
+    } else {
+        return next(new Error('fail to delete category', { cause: 400 }))
+    }
 })

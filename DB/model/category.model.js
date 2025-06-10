@@ -41,5 +41,14 @@ categorySchema.virtual('subCategory',{
 })
 
 
+
+categorySchema.virtual('products', {
+    ref: 'Product',           // The model to use
+    localField: '_id',        // Find products where `categoryId`
+    foreignField: 'categoryId'// is equal to the category's `_id`
+})
+
+
+
 const categoryModel = mongoose.model('Category', categorySchema)
 export default categoryModel

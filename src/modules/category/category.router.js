@@ -25,5 +25,6 @@ router.get('/', category_controller.getAllCategories)
 router.get('/:id', category_controller.getCategoryById)
 
 // delete
+router.delete('/:id', auth(endPoint.delete), category_controller.deleteCategory)
 
 export default router

@@ -201,6 +201,39 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     return res.status(200).json({ message: "Done", finlProducts })
 })
 
+
+// search product by name
+export const searchProductByName = asyncHandler(async (req, res, next) => {
+    const { searchKey } = req.query
+    console.log(searchKey);
+
+    const product = await productModel.findOne({ "name": new RegExp('.*' + searchKey + '.*') }).populate([
+        {
+            path: 'createdBy',
+            select: 'userName email'
+        },
+        {
+            path: 'updatedBy',
+            select: 'userName email'
+        },
+        {
+            path: 'subCategoryId',
+            select: 'name image',
+            populate: {
+                path: 'categoryId',
+                select: 'name image',
+            }
+        },
+        {
+            path: 'brandId',
+            select: 'name image'
+        },
+    ])
+
+    return res.status(200).json({ message: "Done", product })
+}) 
+
+
 // get product by id
 export const getAllProductById = asyncHandler(async (req, res, next) => {
     const { id } = req.params
@@ -237,33 +270,20 @@ export const getAllProductById = asyncHandler(async (req, res, next) => {
 
 
 
-// search product by name
-export const searchProductByName = asyncHandler(async (req, res, next) => {
-    const { searchKey } = req.query
-    console.log(searchKey);
 
-    const product = await productModel.findOne({ "name": new RegExp('.*' + searchKey + '.*') }).populate([
-        {
-            path: 'createdBy',
-            select: 'userName email'
-        },
-        {
-            path: 'updatedBy',
-            select: 'userName email'
-        },
-        {
-            path: 'subCategoryId',
-            select: 'name image',
-            populate: {
-                path: 'categoryId',
-                select: 'name image',
-            }
-        },
-        {
-            path: 'brandId',
-            select: 'name image'
-        },
-    ])
 
-    return res.status(200).json({ message: "Done", product })
+
+// delete product
+export const deleteProduct = asyncHandler(async (req, res, next) => {
+    const { id } = req.params
+    const product = await productModel.findById(id)
+    if (!product) {
+        return next(new Error('In-valid product Id', { cause: 404 }))
+    } else {
+        for (const imageId of product.publicImageIds) {
+            await cloudinary.uploader.destroy(imageId)
+        }
+        const deletedProduct = await productModel.findByIdAndDelete(id)
+        return res.status(200).json({ message: "Done", deletedProduct })
+    }
 })
