@@ -207,7 +207,7 @@ export const searchProductByName = asyncHandler(async (req, res, next) => {
     const { searchKey } = req.query
     console.log(searchKey);
 
-    const product = await productModel.findOne({ "name": new RegExp('.*' + searchKey + '.*') }).populate([
+    const product = await productModel.find({ "name": new RegExp('.*' + searchKey + '.*') }).populate([
         {
             path: 'createdBy',
             select: 'userName email'
