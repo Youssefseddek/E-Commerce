@@ -154,6 +154,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
 // get product
 export const getAllProducts = asyncHandler(async (req, res, next) => {
+    const userId = req.user?._id; // Assuming user is authenticated and user._id is available
 
     const productList = await productModel.find().populate([
         {
@@ -179,27 +180,38 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
         {
             path: 'review'
         }
-    ])
+    ]);
 
-
-    const finlProducts = []
+    const finlProducts = [];
     for (const product of productList) {
-        let sumRating = 0
-        // console.log(productList[i].review.length);
-
+        let sumRating = 0;
         for (let i = 0; i < product.review.length; i++) {
-            sumRating += product.review[i].rating
-            console.log(product.review[i].rating);
-
+            sumRating += product.review[i].rating;
         }
 
-        const convObj = product.toObject()
-        convObj.Rating = sumRating / product.review.length
-        finlProducts.push(convObj)
+        const convObj = product.toObject();
+        convObj.Rating = product.review.length ? sumRating / product.review.length : 0;
+
+        // Check if product is favorite for the current user
+        // Assuming you have a favorites array of user IDs in product, e.g., product.favorites = [userId1, userId2, ...]
+        // If not, adjust according to your schema
+        console.log("Checking favorites for user:", userId);
+        console.log("product.favorites", product.favorites);
+        
+        console.log("ddddddddd", userId && Array.isArray(product.favorites));
+
+        if (userId && Array.isArray(product.favorites)) {
+            convObj.isFavorite = product.favorites.includes(userId.toString());
+            console.log(`User ${userId} isFavorite: ${convObj.isFavorite}`);
+        } else {
+            convObj.isFavorite = false;
+        }
+
+        finlProducts.push(convObj);
     }
 
-    return res.status(200).json({ message: "Done", finlProducts })
-})
+    return res.status(200).json({ message: "Done", finlProducts });
+});
 
 
 // search product by name

@@ -80,6 +80,11 @@ const productSchema = new mongoose.Schema({
         ref: 'Brand',
         required: [true, 'brandId is required'],
     },
+
+    favorites: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
 }, {
     timestamps: true,
     toObject: { virtuals: true },
@@ -92,6 +97,8 @@ productSchema.virtual('review', {
     localField: '_id',
     foreignField: 'productId'
 })
+
+
 
 const productModel = mongoose.model('Product', productSchema)
 export default productModel

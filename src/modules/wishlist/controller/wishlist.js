@@ -18,6 +18,12 @@ export const addToWishlist = asyncHandler(async (req, res, next) => {
             }, { new: true }
         )
 
+        const addedProduct = await productModel.findByIdAndUpdate(productId,
+            {
+                $addToSet: { favorites: req.user._id }
+            }, { new: true }
+        )
+
         return res.status(200).json({ message: 'Done', wishlist })
     }
 
@@ -35,6 +41,12 @@ export const removeToWishlist = asyncHandler(async (req, res, next) => {
         const wishlist = await userModel.findByIdAndUpdate(req.user._id,
             {
                 $pull: { wishlist: productId }
+            }, { new: true }
+        )
+
+        const removedProduct = await productModel.findByIdAndUpdate(productId,
+            {
+                $pull: { favorites: req.user._id }
             }, { new: true }
         )
         return res.status(200).json({ message: 'Done', wishlist })
