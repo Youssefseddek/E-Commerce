@@ -98,7 +98,7 @@ export const getAllCategories = asyncHandler(async (req, res, next) => {
         },
         {
             path: 'products',
-            select: 'name image price',
+           
             options: { limit: Number(req.query.productsLimit) || 6 } // Set default or use query param
         }
     ])
@@ -147,7 +147,7 @@ export const getCategoryById = asyncHandler(async (req, res, next) => {
         },
         {
             path: 'products',
-            select: 'name image price'
+           
         }
     ])
 
