@@ -81,9 +81,9 @@ export const updateCategory = asyncHandler(async (req, res, next) => {
 // get all categories
 export const getAllCategories = asyncHandler(async (req, res, next) => {
 
-    const { page, size } = req.query
-    const { skip, limit } = pagination(page, size)
-    const categoryList = await categoryModel.find().skip(skip).limit(limit).populate([
+    // const { page, size } = req.query
+    // const { skip, limit } = pagination(page, size)
+    const categoryList = await categoryModel.find().populate([
         {
             path: 'createdBy',
             select: 'userName email image'
@@ -98,10 +98,13 @@ export const getAllCategories = asyncHandler(async (req, res, next) => {
         },
         {
             path: 'products',
-           
-            options: { limit: Number(req.query.productsLimit) || 6 } // Set default or use query param
+            // options: { 
+            //     limit: 6 // Will return all products if less than 6, otherwise limits to 6
+            // }
         }
     ])
+    console.log({ categoryList });
+    
 
     // const categories =[]
     //     for await (const doc of categoryModel.find().skip(skip).limit(limit).populate([
